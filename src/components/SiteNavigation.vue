@@ -8,9 +8,16 @@
         </div>
       </RouterLink>
 
-      <div class="flex gap-3 flex-1 justify-end">
-        <i class="fa-solid fa-circle-info text-xl hover:text-weather-secondary duration-150 cursor-pointer" @click="toggleModal"></i>
-        <i class="fa-solid fa-plus text-xl hover:text-weather-secondary duration-150 cursor-pointer"></i>
+      <div class="flex flex-1 justify-end gap-3">
+        <i
+          class="fa-solid fa-circle-info text-xl hover:text-weather-secondary duration-150 cursor-pointer"
+          @click="toggleModal"
+        ></i>
+        <i
+          class="fa-solid fa-plus text-xl hover:text-weather-secondary duration-150 cursor-pointer"
+          @click="addCity"
+          v-if="route.query.preview"
+        ></i>
       </div>
 
       <BaseModal :modalActive="modalActive" @close-modal="toggleModal">
@@ -22,8 +29,36 @@
 
 <script setup>
 import { ref } from 'vue';
-import { RouterLink } from 'vue-router';
+import { uid } from 'uid';
+import { RouterLink, useRoute } from 'vue-router';
 import BaseModal from './BaseModal.vue';
+
+const savedCitys = ref([]);
+const route = useRoute();
+const router = useRouter();
+const addCity = () => {
+  if (localStorage.getItem('savedCitys')) {
+    savedCitys.value = JSON.parse(localStorage.getItem('savedCitys'));
+  }
+
+  const locationObj = {
+    id: uid(),
+    state: route.params.state,
+    city: route.params.city,
+    coords: {
+      lat: route.query.lat,
+      lng: route.query.lng,
+    },
+  };
+
+  savedCitys.value.push(locationObj);
+  localStorage.setItem('savedCitys', JSON.stringify(savedCitys.value));
+
+  let query = Object.assign({}, route.query);
+  delete query.preview;
+  router.replace({ query });
+  router.go(0);
+};
 
 const modalActive = ref(null);
 const toggleModal = () => {
