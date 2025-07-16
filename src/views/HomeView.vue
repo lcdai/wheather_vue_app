@@ -30,7 +30,7 @@
       <Suspense>
         <CityList/>
         <template #fallbback>
-          <p>Loading...</p>
+          <CityCardSkeleton />
         </template>
       </Suspense>
     </div>
@@ -41,6 +41,7 @@
 import { ref } from 'vue'
 import axios from 'axios'
 import { useRoute } from 'vue-router'
+import CityCard from '@/components/CityCard.vue'
 
 const searchQuery = ref('')
 const queryTimeout = ref(null)

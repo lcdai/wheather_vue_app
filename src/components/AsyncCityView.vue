@@ -123,6 +123,9 @@ const getWeatherData = async () => {
       const utc = time.dt * 1000 + localOffset;
       time.currentTime = utc + 1000 * weatherData.data.timezone_offset;
     });
+
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
     return weatherData.data;
   } catch (error) {
     console.error('Error fetching weather data:', error);
